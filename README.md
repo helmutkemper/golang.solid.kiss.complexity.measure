@@ -1,12 +1,13 @@
-# Golang, Solid, Kiss and Complexity Measure
+# SOLID, KISS e Complexity Measure - Uma abordagem para o desenvolvedor Golang
 Dicas de programação em golang para programadores
 
 ### Conteúdo
 
-| Conteúdo                                                                                                                              |
-|---------------------------------------------------------------------------------------------------------------------------------------|
-| [Sobre](https://github.com/helmutkemper/golang.solid.kiss.complexity.measure/edit/master/README.md#Sobre)                             |
-| [Licença](https://github.com/helmutkemper/golang.solid.kiss.complexity.measure/edit/master/README.md#Licença)                         |
+| Conteúdo                                                                                                                           |
+|------------------------------------------------------------------------------------------------------------------------------------|
+| [Sobre](https://github.com/helmutkemper/golang.solid.kiss.complexity.measure/edit/master/README.md#Sobre)                          |
+| [Licença](https://github.com/helmutkemper/golang.solid.kiss.complexity.measure/edit/master/README.md#Licença)                      |
+| [Links](https://github.com/helmutkemper/golang.solid.kiss.complexity.measure/edit/master/README.md#Links)                          |
 
 ### Sobre
 
@@ -20,4 +21,156 @@ Todos são bem vindos para adicionar material e discutir a melhor forma de progr
 
 Todo o conteúdo é baseado na lincença Apache 2.0 e você é libre para fazer o que queizer com este conteúdo, dentro dos limites da licença.
 
+ ### Links
  
+[Desing Principles](https://fi.ort.edu.uy/innovaportal/file/2032/1/design_principles.pdf)
+
+[Cognitive Complexity](https://www.sonarsource.com/docs/CognitiveComplexity.pdf)
+
+
+## Os princípios do SOLID
+
+**SRP - Single responsibility principle**
+Princípio da Responsabilidade Única - Um objeto deve ter uma, e somente uma, responsabilidade para cuidar.
+
+**OCP - Open/closed principle**
+Princípio do Aberto/Fechado - Você deve ser capaz de estender um comportamento de um objeto sem a necessidade de modificá-lo.
+
+**LSP - Liskov substitution principle**
+Princípio da substituição de Liskov - Os objetos derivados devem ser substituíveis por seus objetos base.
+
+**ISP - Interface segregation principle**
+Princípio da segregação de interfaces - Muitas interfaces específicas são melhores do que uma interface única geral.
+
+**DIP - Dependency inversion principle**
+Princípio da inversão de dependência - Dependa de abstrações e não de implementações.
+
+
+
+## Orientação a Objeto e Inteface
+
+Por experiência própria, eu demorei muito entre o dia que eu estudei orientação a objeto e o dia que eu realmente comecei a pensar em orientação a objeto, e se você ainda está estudando, ou faz pouco tempo que estudou, não se preocupe, você, provavelmente vai demorar a entender esta afirmação, pois, é muito mais fácil pensar sem ela.
+
+A base da orientação a objeto em Golang é o **[Struct{}](https://gobyexample.com/structs)**. Na prática, o struct é um tipo definido pelo usuário com a capacidade de agrupar vários outros tipos e funções.
+
+Veja o seguinte código genérico de exemplo:
+
+```javascript
+  class Quadrado implements Area{
+    private var comprimento;
+    
+    public function set(x) {
+      comprimento = x
+    }
+    
+    public function area() {
+      return comprimento * comprimento
+    }
+  }
+  
+  class Circulo implements Area{
+    private var comprimento;
+    private var rasio;
+    
+    public function set(x) {
+      comprimento = x
+    }
+    
+    public function getRaio() {
+      return comprimento/2
+    }
+    
+    public function area() {
+      return math.PI * getRaio()*getRaio()
+    }
+  }
+  
+  interface Area{
+    function set(x)
+    area()
+  }
+```
+
+Esse é um código simples onde há duas classes, uma para calcular a área de um quadrado e outra para calcular a área de um círculo além de uma interface simples.
+
+Todo livro que eu li se concentra muito na classe e explica um monte de coisas sobre ela, mas, hoje eu vejo a interface como sendo a parte mais importante de todas e vou começar por ela.
+
+A interface é um simples contrato de como todas as funções públicas vão ser quando estiverem prontas, por tanto, ela deveria ser a primeira coisa a ser montada em um trabalho em grupo.
+
+Na prática, o grupo vai se reunir e imaginar algo tipo, temos dois grupos de trabalho, o primeiro grupo vai trabalhar nas funcionalidades de como implementar a área de um círculo e o segundo grupo vai implementar as funcionalidades de cálculo da área de um quadrado.
+Os grupos discutem e decidem, necessitamos no mínimo de dois métodos, um para definir o valor e um outro para pegar o resultado da área.
+É nesse ponto onde a interface se mostra extremamente eficiente, ela é um contrato a ser seguido por todos os grupos, mas, a interface é um contrato de funções mínimas, e não uma armadilha a suas classes, ou seja, sua classe vai ter obrigatoriamente os mesmos métos com os mesmos tipos da interface, mas, isto não te obriga a ter apenas eles, por isto, na segunda classe há um método a mais, o getRaio().
+
+Agora vamos imaginar o seguinte, existe um terceiro grupo encarregado de montar uma interface gráfica e esse grupo necessita de mais tempo para confeccionar a interface gráfica do que os desenvolvedores necessitam para implementar, mas, como em todo projeto, o tempo é muito apertado e eles não podem esperar as funcionalidades ficarem prontas.
+
+A grande beleza da interface é o fato dela permitir dados "mokados", ou seja, dados fantazia próximos ao real e com a finalidade de permitir o grupo da interface gráfica começar a trabalhar enquanto o resto fica pronto.
+
+Por exemplo:
+
+```javascript
+  class Mokado implements Area{
+    public function set(x) {
+      
+    }
+    
+    public function area() {
+      return 16
+    }
+  }
+
+  interface Area{
+    function set(x)
+    area()
+  }
+```
+
+Como você pode ver no exemplo, a classe **Mokado** compila e é funcional a ponto da equipe de interface gráfica começar a trabalhar e vê se a parte dela funciona como esperado.
+
+O outro ponto a ser lembrado é o **ISP - Interface segregation principle**, ou princípio da segregação de interfaces - Muitas interfaces específicas são melhores do que uma interface única geral.
+
+Na prática isto quer dizer o seguinte, faça interface expecíficas para grupo de coisas específicas.
+
+Imagine um código de player de vídeo. Ele necessita de um monte de controles de vídeo, tipo, play, pausa, velocidade, legenda, etc.
+Você pode fazer uma interface gigante com todas as funcionalidades, provavelmente vai funcionar, mas, pode ser um tiro no pé e o **ISP** é justamente para evitar isto, ou seja, crie uma interface para as funções básicas de vídeo, tipo, play e pausa, e crie outra para as funções de legendas, e assim por diante.
+
+O grande segredo é: divida suas interfaces em grupos por necessidade.
+
+Agora vamos ver a mesma coisa pelo ponto de vista do Golang.
+
+```golang
+  import "math"
+  
+  type Quadrado struct {
+    comprimento float64 // 'c'omprimento = private e 'C'omprimento = public
+  }
+  
+  func(el *Quadrado) Set(comprimento float64) {
+    el.comprimento = comprimento
+  }
+  
+  func(el *Quadrado) Area() float64 {
+    return el.comprimento * el.comprimento
+  }
+
+  type Circulo struct {
+    comprimento float64
+    raio float64
+  }
+  
+  func(el *Circulo) Set(comprimento float64) {
+    el.comprimento = comprimento
+  }
+  
+  func(el *Circulo) Area() float64 {
+    return el.GetRaio() * el.GetRaio() * math.Pi
+  }
+  
+  func(el *Circulo) GetRaio() float64 {
+    return el.comprimento/2
+  }
+  
+  type Area interface {
+    Set(comprimento float64)
+    Area() float64
+  }
+```
