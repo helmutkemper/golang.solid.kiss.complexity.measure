@@ -28,6 +28,14 @@ Todo o conteúdo é baseado na lincença Apache 2.0 e você é libre para fazer 
 [Cognitive Complexity](https://www.sonarsource.com/docs/CognitiveComplexity.pdf)
 
 
+## Regra de ouro
+
+Você do futuro vai ter de usar seus códigos depois de mais de um ano sem lembrar que este código existia e você vai está muito cansado doido para sair da frente do computador e algo muito bom está te esperando, mas, você tem de trabalhar no teu código antigo.
+
+Se você não se esforça para entender esta regra, você não merece ser desenvolvedor, porque, cedo ou tarde, alguém além de você vai pegar seus códigos e vai passar por isto.
+
+O **Kiss - Keep It Stupid Simple / Keep It Simple, Stupid!**, o **SOLID** do Oncle Bob e o **Cognitive Complexity** do Thomas J. McCabe, Sr simplesmente resumem a regra de ouro.  
+
 ## Os princípios do SOLID
 
 **SRP - Single responsibility principle**
@@ -169,6 +177,43 @@ Agora vamos ver a mesma coisa pelo ponto de vista do Golang.
     return el.comprimento/2
   }
   
+  type Area interface {
+    Set(comprimento float64)
+    Area() float64
+  }
+```
+
+No exemplo abaixo temos o equivalente a uma classe escrita em Golang.
+Nos livros, você vai ver três formas de escrever uma função associada a um struct, como eu fiz, com a função do lado de fora, com um ponteiro, simplesmente escrevendo o nome da função após a chave ou escrever a função dentro do próprio struct.
+
+Primeira regra, caso você goste de escrever as funções dentro do struct, para você, **Kiss** quer dizer **Keep It Simple, Stupid!**, caso contrario, **Kiss** quer dizer **Keep It Stupid Simple** e não se iluda, se você acha que isso foi grosseria, espera até uma outra pessoa receber seu código e ouvir algo tipo, você só vai para casa hoje depois disso ficar pronto.
+
+```golang
+  import "math"
+  
+  type Quadrado struct {
+    comprimento float64 // 'c'omprimento = private e 'C'omprimento = public
+  }
+  
+  func(el *Quadrado) Set(comprimento float64) {
+    el.comprimento = comprimento
+  }
+  
+  func(el *Quadrado) Area() float64 {
+    return el.comprimento * el.comprimento
+  }
+
+```
+
+Como regra simples, primeira letra maiúcula para nomes de chaves dentro do struct ou nomes de funções as tornam públicas, e letras minúsculas privadas.
+
+**func(el *Quadrado) Set(comprimento float64)** é uma função pertencente ao struct Quadrado, e **el *Quadrado** define o termo **el** como sendo o **this** de várias linguagens, onde **el *Quadrado** permite o valor dentro do struct ser alterado e **el Quadrado**, sem o asterísco de ponteiro, permite apenas leitura.
+
+No início, eu sempre usava termos mais explicativos para o **el**, tipo, **func(elementoDeArea *Quadrado) Set(comprimento float64)**, mas, a prática me mostrou a necesside de copiar/colar muito cabeçalho de função, e hoje eu coloco simplesmente **el** de element.
+
+
+
+```
   type Area interface {
     Set(comprimento float64)
     Area() float64
