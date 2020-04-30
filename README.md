@@ -211,11 +211,72 @@ Como regra simples, primeira letra maiúcula para nomes de chaves dentro do stru
 
 No início, eu sempre usava termos mais explicativos para o **el**, tipo, **func(elementoDeArea *Quadrado) Set(comprimento float64)**, mas, a prática me mostrou a necesside de copiar/colar muito cabeçalho de função, e hoje eu coloco simplesmente **el** de element.
 
-
-
-```
+```golang
   type Area interface {
     Set(comprimento float64)
     Area() float64
   }
 ```
+
+Já o uso da interface é bem simples, basta apontar o objeto assim: **var variavel nomeInterface = &nomeStruct{}**
+
+```golang
+  var a Area = &Quadrado{}
+      a.Set(16.0)
+  fmtPrintf("área: %v\n", a.Area())
+```
+
+Para o desenvolvedor, apenas definir o tipo da variável como sendo a interface, **var a Area**, já faz o editor reconhecer e usar o autocompletar.
+
+> Mas, meu código só vai ser desenvolvido por mim...
+
+Nunca cometa o erro de não criar a interface. Tecnicamente, a interface é apenas um contrato, mas, na verdade, ela é um grande salva vidas para quando os parâmetros de projeto mudam do dia para a noite.
+
+Um exemplo simples da vida real muito comum e simples de acontecer, o projeto foi feito para usar MySql e já faz dois anos que trabalhamos nele, mas, hoje surjiu um cliente muito grande e ele só trabalha com PostgreSQL e a reunião é para ontem.
+
+Regra simples que pode poupar muito tempo a você do futuro: sempre monte um objeto em vez de usar o objeto padrão criado por outras pessoas para todos os pontos do código importantes, por mais remota que seja esta possibilidade de mudança um dia e monte a sua interface para ela.
+
+Exemplo prático:
+
+```golang
+  // código original de exemplo
+  db, err := sql.Open("mysql", "root:password@tcp(127.0.0.1:3306)/test")
+```
+
+Nesse ponto, há vários proplemas, tipo, o MongoDB tem métodos totalmente diferentes e é uma possibilidade bem real de acontecer um dia.
+Pode ser que o drive de banco fique obceloto por algum motivo qualquer. Por xemplo da vida real, um dia apareceu um texto tipo "esse código não é muito bom e eu não recomendo mais que seja usado" no repositório do drive mais usado para MongoDB em golang e não obrigação nenhuma de quem fez o drive novo de seguir o drive antigo.
+
+Hoje, eu faria algo parecido como exemplo abaixo.
+
+```golang
+  const (
+    KConnectionTypeTcp TypeConn iota + 1
+    KConnectionTypeUdp
+  )
+  
+  type BancoDeDados interface {
+    User(user string)
+    Password(pass string)
+    TypeConnection(typeConn TypeConn)
+    Host(host string)
+    Port(port string)
+    Connect() error
+  }
+  
+  type MySql struct {
+    db *sql.MySQLDriver
+    ...
+  }
+  
+  func(el *MySql) Connect() error {
+    if el.user == "" {
+      return erros.New("user name not set")
+    }
+    
+    ...
+    
+    el.db.Open("mysql", el.user + ":" + el.password + "@(" + el.host + ":" + el.port + ")/" + el.dbName )
+  }
+```
+
+Isso dá um pouco de trabalho inicial, mas, isto salva a vida quando algo muda no projeto e todo programador sabe, o projeto muda o tempo todo.
