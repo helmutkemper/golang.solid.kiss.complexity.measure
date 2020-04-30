@@ -280,3 +280,8 @@ Hoje, eu faria algo parecido como exemplo abaixo.
 ```
 
 Isso dá um pouco de trabalho inicial, mas, isto salva a vida quando algo muda no projeto e todo programador sabe, o projeto muda o tempo todo.
+
+Então, acredite em mim, meu primeiro computador foi um TK-90X em 1986 e eu nunca vi um projeto grande não mudar no meio.
+
+> Motivação: Lá pelo início dos anos 2000 eu assinei um contrato pagando muito bem para fazer um projeto em MySql e tudo foi feito no prazo combinado e entregue conforme o contrato. No dia da apresentação técnica para o pessoal da implantação, o técnoco responssável diz: nós só trabalhamos com Postgre e o sistema tem de mudar... cobrei um valor bem alto e pedi 30 dias; fui para casa, mudei uma string, testei e segui a vida de forma mais feliz.
+
