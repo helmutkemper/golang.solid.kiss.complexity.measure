@@ -1,4 +1,4 @@
-# SOLID, KISS e Complexity Measure - Uma abordagem para o desenvolvedor Golang
+# SOLID, KISS e Complexity Measure - Uma conversa com o desenvolvedor Golang
 Dicas de programação em golang para programadores
 
 ### Conteúdo
