@@ -34,7 +34,24 @@ Você do futuro vai ter de usar os seus códigos depois de mais de um ano sem le
 
 Se você não se esforça para entender esta regra, você não merece ser desenvolvedor, porque, cedo ou tarde, alguém além de você vai pegar os seus códigos e vai passar por isto.
 
-O **Kiss - Keep It Stupid Simple / Keep It Simple, Stupid!**, o **SOLID** do Uncle Bob e o **Cognitive Complexity** do Sr Thomas J. McCabe simplesmente resumem a regra de ouro e todo programador um dia passa a entender a regra de ouro, mesmo sem conhecer os trabalhos deles.
+O **Kiss - Keep It Stupid Simple / Keep It Simple, Stupid!**, o **SOLID** do Robert C. Martin, também conheciso por Uncle Bob e o **Cognitive Complexity** do Sr Thomas J. McCabe simplesmente resumem a regra de ouro e todo programador um dia passa a entender a regra de ouro, mesmo sem conhecer os trabalhos deles.
+
+## Os princípios do SOLID
+
+**SRP - Single responsibility principle**
+Princípio da Responsabilidade Única - Um objeto deve ter uma, e somente uma, responsabilidade para cuidar.
+
+**OCP - Open/closed principle**
+Princípio do Aberto/Fechado - Você deve ser capaz de estender um comportamento de um objeto sem a necessidade de o modificar.
+
+**LSP - Liskov substitution principle**
+Princípio da substituição de Liskov - Os objetos derivados devem ser substituíveis por seus objetos base.
+
+**ISP - Interface segregation principle**
+Princípio da segregação de interfaces - Muitas interfaces específicas são melhores que uma interface única geral.
+
+**DIP - Dependency inversion principle**
+Princípio da inversão de dependência - Dependa de abstrações e não de implementações.
 
 ## Introdução dada pelo Uncle Bob
 
@@ -197,22 +214,7 @@ O Design Orientado a Objetos está repleto de princípios e técnicas para criar
 
 
 
-## Os princípios do SOLID
 
-**SRP - Single responsibility principle**
-Princípio da Responsabilidade Única - Um objeto deve ter uma, e somente uma, responsabilidade para cuidar.
-
-**OCP - Open/closed principle**
-Princípio do Aberto/Fechado - Você deve ser capaz de estender um comportamento de um objeto sem a necessidade de o modificar.
-
-**LSP - Liskov substitution principle**
-Princípio da substituição de Liskov - Os objetos derivados devem ser substituíveis por seus objetos base.
-
-**ISP - Interface segregation principle**
-Princípio da segregação de interfaces - Muitas interfaces específicas são melhores que uma interface única geral.
-
-**DIP - Dependency inversion principle**
-Princípio da inversão de dependência - Dependa de abstrações e não de implementações.
 
 
 
@@ -307,7 +309,7 @@ Por exemplo:
 
 Como dá para ver no exemplo, a classe **Mokado** compila e é funcional a ponto da equipe de interface gráfica começar a trabalhar e vê se a parte dela funciona como esperado.
 
-A interface também é a base da mudança inesperada de forma mais segura, e falaremos disso mais tarde.
+Porém, além de tudo, a interface também é a base da mudança inesperada de forma mais segura, e falaremos disso mais tarde.
 
 O outro ponto a ser lembrado é o **ISP - Interface segregation principle**, ou princípio da segregação de interfaces - Muitas interfaces específicas são melhores que uma interface única geral.
 
@@ -380,7 +382,7 @@ Primeira regra, caso você goste de escrever as funções dentro do struct, para
 
 ```
 
-Como regra simples, primeira letra maiúscula para nomes de chaves dentro do struct ou nomes de funções as tornam públicas, e letras minúsculas privadas.
+Como regra simples, a primeira letra maiúscula para nomes de chaves dentro do struct ou nomes de funções as tornam públicas, e letras minúsculas privadas.
 
 **func(el \*Quadrado) Set(comprimento float64)** é uma função pertencente ao struct Quadrado, e **el \*Quadrado** define o termo **el** como sendo o **this** de várias linguagens, onde **el \*Quadrado** permite o valor dentro do struct ser alterado e **el Quadrado**, sem o asterisco de ponteiro, permite apenas a leitura do valor.
 
@@ -403,9 +405,9 @@ Já o uso da interface é bem simples, basta apontar o objeto assim: **var vari�
 
 Para o desenvolvedor, apenas definir o tipo da variável como sendo a interface, **var a Area**, já faz o editor reconhecer e usar o autocompletar.
 
-> Mas, meu código só vai ser desenvolvido por mim...
+> Meu código só vai ser desenvolvido por mim e eu não necessito disso...
 
-Nunca cometa o erro de não criar a interface. Tecnicamente, a interface é apenas um contrato, mas, na verdade, ela é um grande salva vidas para quando os parâmetros de projeto mudam do dia para a noite.
+Nunca cometa o erro de não criar a interface. Tecnicamente, a interface é apenas um contrato, mas, na verdade, ela é um grande salva-vidas para quando os parâmetros de projeto mudam do dia para a noite.
 
 Entenda agora a beleza da interface em Golang no exemplo abaixo:
 
