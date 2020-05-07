@@ -116,119 +116,6 @@ Para evitar a degradação da arquitetura de dependência, as dependências entr
 
 O Design Orientado a Objetos está repleto de princípios e técnicas para criar esses firewalls e gerenciar dependências de módulos. São esses princípios e técnicas discutidos aqui. Primeiro, examinaremos os princípios e depois as técnicas ou padrões de design para ajudam a manter a arquitetura de dependência de um aplicativo.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## Orientação a Objeto e Inteface
 
 Por experiência própria, demorei muito entre o dia onde estudei orientação a objeto e o dia onde realmente comecei a pensar em orientação a objeto. 
@@ -416,7 +303,8 @@ Entenda agora a beleza da interface em Golang no exemplo abaixo:
       a = &Quadrado{}
       a.Set(16.0)
       fmtPrintf("área: %v\n", a.Area())
-
+      
+      // circulo é um objeto completamente diferente
       a = &Circulo{}
       a.Set(16.0)
       fmt.Printf("área: %v\n", a.Area())
@@ -437,7 +325,7 @@ Exemplo prático:
 
 Nesse ponto, há vários proplemas, tipo, o MongoDB tem métodos totalmente diferentes e é uma possibilidade bem real de acontecer um dia.
 Pode ser que o drive de banco fique obsoleto por algum motivo qualquer. 
-Exemplo real, um dia apareceu um texto tipo "esse código não é muito bom e eu não recomendo mais que seja usado" no repositório do drive mais usado para MongoDB em golang e não há obrigação nenhuma de quem fez o drive novo de seguir o drive antigo.
+Exemplo real, um dia apareceu um texto tipo "esse código não é muito bom e eu não recomendo mais que seja usado" no repositório do drive mais usado para MongoDB em golang e não há obrigação nenhuma de quem fez o novo drive de seguir o drive antigo.
 
 Hoje, eu faria algo parecido como exemplo abaixo.
 
@@ -480,57 +368,100 @@ Então, acredite em mim, meu primeiro computador foi um TK-90X em 1986 e eu nunc
 
 Entendeu a beleza da interface em golang? O contrato permite mudanças seguras. Apenas lembre de fazer várias interfaces, uma para cada grupo de funcionalidade.
 
-Vamos agora imaginar uma nova situação, o código do quadrado está em produção e não pode mais ser alterado, mas, nem todo retângulo é um quadrado e você agora necessita fazer alterações:
+## LSP - Liskov substitution principle
+Princípio da substituição de Liskov - Os objetos derivados devem ser substituíveis por seus objetos base.
 
-> Regra da imutabilidade: Uma fez publicado, o código não pode ter métodos e funcionamento alterados.
+Quando a gente vem de hardware, a gente aprende a otimizar todo o código, mas, certas optimizações de desempenho não são muito legais para a organização do código, principalmente para bancos de dados e afins.
 
-Há um compromisso sagrado no golang: um código escrito em go 0.1 deve rodar em go 1.14 sem problemas e você deve respeitar isto. Então, comente os métodos obsoletos com **Deprecated:** seguido do texto de explicação e novos métodos a serem usados.
+Por exemplo, muitos programadores usam o JSon, JavaScript Object Notation, já os drivers do MongoDB usam o BSon, JSon binário, os bancos SQL devolvem valores próprios do drive, e assim vai, cada um faz de um modo.
 
-Agora vamos criar o objeto **Retângulo** expandido as funcionalidades do objeto **Quadrado**
+O problema disso é a compatibilidade, também conhecida como portabilidade do código.
+
+Por exemplo, o SQL Server tem o tipo **mssql.UniqueIdentifier**, mas, na verdade, este tipo é um **[16]byte**, definido por **type UniqueIdentifier [16]byte**.
+
+Veja o exemplo abaixo tirado de um parser de SQL para MongoDB.
 
 ```golang
-  import "math"
-  
-  type Quadrado struct {
-    comprimento float64 // 'c'omprimento = private e 'C'omprimento = public
+type Client struct {
+	ID                      int
+	Phone                   sql.NullString
+	Email                   string
+	Password                string
+	UniqueID                mssql.UniqueIdentifier
+}
+```
+
+Esse struct usa os tipos, não nativos do golang, **sql.NullString** e **mssql.UniqueIdentifier** para arquivar dados e isto deixa o código não portável.
+
+A maneira de resolver isto é dividir o software em camadas. Lembre-se, arquitetura de software é multicamada, por isso, multicamada é a primeira coisa dita por Uncle Bob no seu manifesto do **SOLID**.
+
+No final das contas, tanto o Uncle Bob quanto o Liskov dizem para você dividor o seu código em camadas distintas.
+Por exemplo, vamos pegar dados de um banco SQL Server e devolver esse dado a nossa aplicação. A forma mais fácil e errada de fazer isto é ler o dado e usar ele na forma nativa imaginada pelo criador do drive. A única forma de deixar o código reaproveitável é criar uma camada de dados e converter o dado para um formato nativo do golang.
+
+Por exemplo, **sql.NullString** pode virar
+
+```golang
+
+  type NullString struct {
+    String string
+    Valid  bool
   }
-  
-  func(el *Quadrado) Set(comprimento float64) {
-    el.comprimento = comprimento
-  }
-  
-  func(el *Quadrado) Area() float64 {
-    return el.comprimento * el.comprimento
-  }
-  
-  type Retangulo struct{
-    Quadrado
-  }
-  
-  func(el *Retangulo) SetAltura(comprimento float64) {
+
+```
+ 
+e **mssql.UniqueIdentifier** pode virar
+ 
+```golang
+
+type UniqueIdentifier [16]byte
+
+```
+
+Na prática, você vai montar um pequeno módulo seu com os tipos nativos e todos os dados vão passar por este módulo.
+ 
+```
+  consumidor           modulo                 banco            
+  +--------------+     +---------------+      +---------------+
+  |              |     |               |      |               |
+  |    formato   |     |  parser para  |      |  inserção do  |
+  |    nativo    | --> |  formato do   | -->  |    dado no    |
+  |    golang    |     |     banco     |      |     banco     |
+  |              |     |               |      |               |
+  +--------------+     +---------------+      +---------------+
+
+  banco                modulo                 consumidor
+  +--------------+     +---------------+      +---------------+
+  |              |     |               |      |               |
+  |  leitura do  |     |  parser para  |      |  dado pronto  |
+  |   dado no    | --> |    formato    | -->  |   para uso    |
+  |    banco     |     |    nativo     |      |               |
+  |              |     |               |      |               |
+  +--------------+     +---------------+      +---------------+
+
+```
+
+Uma dica são as funções **MarshalJSON() ([]byte, error) {...}** e **UnmarshalJSON(data []byte) error{...}** para fazer o parser personalizado do JSon de forma a atender todas as suas necessidades. 
+
+A grande questão do JSon são dois pontos de vista, a conversão de dados deixa o processamento mais lento, mas, ao mesmo tempo, ela deixa o código modular e independete. Veja o caso do Linux, você pode ter uma interface gráfica bonita instalando o Ubuntu ou uma interface gráfica leve instalando o Lubuntu, onde os dois usam os mesmos núcleos de código e todas as informações entre ambiente gráfico e comando são passados por um texto padronizado. Por outro lado, o fato do Ubunto ser modular de mais faz o desempenho dele não ser muito bom para jogos.
+
+
+```golang
+
+    type Time struct {
+      time.Time
+    }
     
-  }
-  
-  func(el *Retangulo) SetComprimento(comprimento float64) {
-  
-  }
-  
-  func test() {
-    var a AreaComplexa = &Retangulo{}
-    a.SetAltura(1.0)
-    a.SetComprimento(1.0)
-    a.Area()
-  }
-  
-  type AreaComplexa interface {
-    SetAltura(comprimento float64)
-    SetComprimento(comprimento float64)
-    Area() float64
-  }
-  
-  type Area interface {
-    Set(comprimento float64)
-    Area() float64
-  }
+    func (t Time) MarshalJSON() ([]byte, error) {
+      return json.Marshal(t.Time.Unix())
+    }
+    
+    func (t *Time) UnmarshalJSON(data []byte) error {
+      var i int64
+      if err := json.Unmarshal(data, &i); err != nil {
+        return err
+      }
+      t.Time = time.Unix(i, 0)
+      return nil
+    }
 
 ```
