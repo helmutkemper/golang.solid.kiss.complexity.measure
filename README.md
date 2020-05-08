@@ -718,3 +718,25 @@ Princípio do Aberto/Fechado - Você deve ser capaz de estender um comportamento
 
 Percebe como ficou fácil? Quando você coloca um tipo dentro do outro, o novo tipo herda todas as propriedades e métodos, então, basta reescrever apenas o necessário. 
 
+```golang
+    var c ClientGeneric
+    c.Password = "pass"
+```
+
+Há ainda duas outras formas de modificar um struct. A primeira forma funciona desde que os structs envolvidos techam chaves de nomes diferentes.
+
+```golang
+    type ClientGeneric struct {
+      Client
+      OutroStruct
+    }
+```
+
+Caso contrário, basta adicionar uma chave com um novo nome para pelo menos uma das chaves em conflito.
+
+```golang
+    type ClientGeneric struct {
+      NovoNome Client
+      NomeOpcional OutroStruct
+    }
+```
