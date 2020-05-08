@@ -716,6 +716,14 @@ Princípio do Aberto/Fechado - Você deve ser capaz de estender um comportamento
     func (el Client) ToDb() ClientNoSql {...}
 ```
 
+Isso é o mesmo de 
+
+```
+    class ClientGeneric extends Client {
+      override function ToDb() :ClientNoSql {...}
+    }
+```
+
 Percebe como ficou fácil? Quando você coloca um tipo dentro do outro, o novo tipo herda todas as propriedades e métodos, então, basta reescrever apenas o necessário. 
 
 ```golang
