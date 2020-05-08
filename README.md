@@ -310,11 +310,11 @@ Entenda agora a beleza da interface em Golang no exemplo abaixo:
       fmt.Printf("área: %v\n", a.Area())
 ```
 
-Esse é um exemplo bem simples e serve apenas de exemplo, mas, o ponto aqui é o seguinte, a interface **Area** foi feita para calcular área de figuras planas. Logo temos, **a = &Quadrado{}** permite ao ponteiro de interface **a** calcular a área de um quadrado, e **a = &Circulo{}** permite ao mesmo ponteiro calcular a área do circulo apenas mudando uma linha, ou seja, o código pode mudar e crescer de forma segura.
+Esse é um exemplo bem simples e serve apenas de exemplo, mas, o ponto aqui é o seguinte, a interface **Area** foi feita para calcular área de figuras planas. Logo temos, **a = &Quadrado{}** permite ao ponteiro de interface **a** calcular a área de um quadrado, e **a = &Circulo{}** permite ao mesmo ponteiro calcular a área de um circulo, apenas mudando uma linha, ou seja, o código pode mudar e crescer de forma segura.
 
 Um exemplo real simples, muito comum e simples de acontecer, o projeto foi feito para usar MySql e já faz dois anos que trabalhamos nele, mas, hoje surgiu um cliente muito grande e ele só trabalha com PostgreSQL e a reunião é para ontem.
 
-Regra simples para poupar muito tempo a você do futuro: sempre monte um objeto em vez de usar o objeto padrão criado por outras pessoas para todos os pontos do código importantes, por mais remota que seja esta possibilidade de mudança um dia, e monte a sua interface para ela.
+Regra simples para poupar muito tempo a você do futuro: sempre monte um objeto em vez de usar o objeto padrão criado por outras pessoas para todos os pontos do código importantes, por mais remota que seja esta possibilidade de mudança, e monte a sua interface para ela.
 
 Exemplo prático:
 
@@ -323,7 +323,7 @@ Exemplo prático:
   db, err := sql.Open("mysql", "root:password@tcp(127.0.0.1:3306)/test")
 ```
 
-Nesse ponto, há vários proplemas, tipo, o MongoDB tem métodos totalmente diferentes e é uma possibilidade bem real de acontecer um dia.
+Nesse ponto, há vários problemas, tipo, o MongoDB tem métodos totalmente diferentes e é uma possibilidade bem real de acontecer um dia.
 Pode ser que o drive de banco fique obsoleto por algum motivo qualquer. 
 Exemplo real, um dia apareceu um texto tipo "esse código não é muito bom e eu não recomendo mais que seja usado" no repositório do drive mais usado para MongoDB em golang e não há obrigação nenhuma de quem fez o novo drive de seguir o drive antigo.
 
@@ -362,16 +362,16 @@ Hoje, eu faria algo parecido como exemplo abaixo.
 
 Isso dá um pouco de trabalho inicial, mas, isto salva a vida quando algo muda no projeto, e todo programador sabe, o projeto muda o tempo todo.
 
-Então, acredite em mim, meu primeiro computador foi um TK-90X em 1986 e eu nunca vi um projeto grande não mudar no meio.
+Apenas para deixar bem claro, crie um encapsulamento para todos os códigos críticos e tente deixar o objeto dele com funções genéricas, assim, você pode usar uma interface e apenas mudar o ponteiro do objeto sem que houver necessidade de mudanças críticas no código.
 
 > Motivação: Lá pelo início dos anos 2000 assinei um contrato pagando muito bem para fazer um projeto em MySql e tudo foi feito no prazo combinado e entregue conforme o contrato. No dia da apresentação técnica para o pessoal da implantação, o técnico responsável diz: nós só trabalhamos com Postgre e o sistema tem de mudar... cobrei um valor bem alto e pedi 30 dias; fui para casa, mudei uma string, testei e segui a vida de forma mais feliz.
 
-Entendeu a beleza da interface em golang? O contrato permite mudanças seguras. Apenas lembre de fazer várias interfaces, uma para cada grupo de funcionalidade.
+Entendeu a beleza do encapsulamento junto com interface em golang? O contrato permite mudanças seguras. Apenas lembre de fazer várias interfaces, uma para cada grupo de funcionalidade.
 
 ## LSP - Liskov substitution principle
 Princípio da substituição de Liskov - Os objetos derivados devem ser substituíveis por seus objetos base.
 
-Quando a gente vem de hardware, a gente aprende a otimizar todo o código, mas, certas optimizações de desempenho não são muito legais para a organização do código, principalmente para bancos de dados e afins.
+Quando a gente vem de hardware, a gente aprende a otimizar todo o código, mas, certas otimizações de desempenho não são muito legais para a organização do código, principalmente para bancos de dados e afins.
 
 Por exemplo, muitos programadores usam o JSon, JavaScript Object Notation, já os drivers do MongoDB usam o BSon, JSon binário, os bancos SQL devolvem valores próprios do drive, e assim vai, cada um faz de um modo.
 
@@ -396,7 +396,7 @@ Esse struct usa os tipos, não nativos do golang, **sql.NullString** e **mssql.U
 A maneira de resolver isto é dividir o software em camadas. Lembre-se, arquitetura de software é multicamada, por isso, multicamada é a primeira coisa dita por Uncle Bob no seu manifesto do **SOLID**.
 
 No final das contas, tanto o Uncle Bob quanto o Liskov dizem para você dividor o seu código em camadas distintas.
-Por exemplo, vamos pegar dados de um banco SQL Server e devolver esse dado a nossa aplicação. A forma mais fácil e errada de fazer isto é ler o dado e usar ele na forma nativa imaginada pelo criador do drive. A única forma de deixar o código reaproveitável é criar uma camada de dados e converter o dado para um formato nativo do golang.
+Por exemplo, vamos pegar dados de um banco SQL Server e devolver esse dado a nossa aplicação. A forma mais fácil E ERRADA DE FAZER ISTO é ler o dado e usar ele na forma nativa imaginada pelo criador do drive. A única forma de deixar o código reaproveitável é criar uma camada de dados e converter o dado para um formato nativo do golang.
 
 Por exemplo, **sql.NullString** pode virar
 
@@ -442,8 +442,7 @@ Na prática, você vai montar um pequeno módulo seu com os tipos nativos e todo
 
 Uma dica são as funções **MarshalJSON() ([]byte, error) {...}** e **UnmarshalJSON(data []byte) error{...}** para fazer o parser personalizado do JSon de forma a atender todas as suas necessidades. 
 
-A grande questão do JSon são dois pontos de vista, a conversão de dados deixa o processamento mais lento, mas, ao mesmo tempo, ela deixa o código modular e independete. Veja o caso do Linux, você pode ter uma interface gráfica bonita instalando o Ubuntu ou uma interface gráfica leve instalando o Lubuntu, onde os dois usam os mesmos núcleos de código e todas as informações entre ambiente gráfico e comando são passados por um texto padronizado. Por outro lado, o fato do Ubunto ser modular de mais faz o desempenho dele não ser muito bom para jogos.
-
+A grande questão do JSon são dois pontos de vista, a conversão de dados deixa o processamento mais lento, mas, ao mesmo tempo, ela deixa o código modular e independente. Veja o caso do Linux, você pode ter uma interface gráfica bonita instalando o Ubuntu ou uma interface gráfica leve instalando o Lubuntu, onde os dois usam os mesmos núcleos de código e todas as informações entre ambiente gráfico e comando são passados por um texto padronizado. Por outro lado, o fato do Ubunto ser modular de mais faz o desempenho dele não ser muito bom para jogos.
 
 ```golang
 
@@ -465,3 +464,255 @@ A grande questão do JSon são dois pontos de vista, a conversão de dados deixa
     }
 
 ```
+
+Vamos ao exemplo prático: a nossa aplicação tem um módulo de cliente com as seguintes regras:
+
+| Campo          | Descrição                                                                                                         |
+|----------------|-------------------------------------------------------------------------------------------------------------------|
+| Id             | inteiro maior do que zero (16 bytes)                                                                              |
+| Phone          | string ou nil (opcional)                                                                                          |
+| Email          | string                                                                                                            |
+| Password       | string                                                                                                            |
+
+É início de projeto e vamos usar um banco SQL, tipo SQL Server, logo, o struct Client pode facilmente ser 
+
+```golang
+    type Client struct {
+      Id                      mssql.UniqueIdentifier
+      Phone                   sql.NullString
+      Email                   string
+      Password                string
+    }
+```
+
+Como você poder ver, **client** vai atender todas as nossas necessidades atuais e você vai terminar logo, claro, o código não é portável e usa dois tipos nativos de drive de banco SQL, **mssql.UniqueIdentifier** e **sql.NullString**, mas, este é um problema para você do futuro.
+
+Como o futuro é amanhã e estamos vivendo o hoje, basta fazer algo tipo
+
+```golang
+      var id mssql.UniqueIdentifier
+      id.Scan(1)
+      
+      var phone sql.NullString
+      phone.Scan("123456")
+      
+      var a = Client{
+        Id: id,
+        Phone: phone,
+        Email: "user@company.com",
+        Password: "pass",
+      }
+```
+
+Como você pode ver, foi simples e prático popular **client** com dados e inserir no banco. Claro, estamos falando de um sistema complexo com várias tabelas grandes.
+
+O problema, o código não é portável e agora estamos no futuro! Fechamos contrato com uma empresa muito grande, pagando muito bem, mas, a empresa usa um banco noSQL e você não lembra mais como esse código foi feito (isto é um exemplo bem real, acredite em mim!).
+
+Ates de proceguir, um problema de usar códigos de terceiros, são pequenos erros, tipo, **sql.NullString** é na verdade
+
+```golang
+    type NullString struct {
+      String string
+      Valid  bool // Valid is true if String is not NULL
+    }
+```
+
+Porém, **String** é reservado pelo golang, mas, o compilador vai aceitar a construção **String string** dentro do **struct**. O problema disso é fato de todo typo criado pelo desenvolvedor aceitar a função **func (el novoTipo) String() string {...}** como sendo uma função automática para converter o tipo em string, por exemplo, **fmt.Printf("%v", novoTipo)**.
+
+> **func (el novoTipo) String() string {...}** não tem ponteiro, ou seja, não pode ser **el \*novoTipo**
+
+Vamos fazer a mesma coisa do modo certo e explicar:
+
+Primeiro você vai criar um módulo **client** na sua estrutura de código, mais ou menos assim:
+
+```golang
+    // este é im arquivo dentro do módulo client
+    type UniqueIdentifier [16]byte
+    
+    func(el *UniqueIdentifier) Set(value interface{}) {
+    
+      // faz a conversão de tipos
+      switch converted := value.(type) {
+      case nil:
+        *el = [16]byte{0x00}
+    
+      // todo: fazer outros tipos (int, uint, float, ...)
+      case int64:
+        b := make([]byte, 16)
+        binary.LittleEndian.PutUint64(b, uint64(converted))
+        for i := 0; i != 16; i += 1 {
+          el[i] = b[i]
+        }
+    
+      case string:
+        v, _ := strconv.Atoi(converted)
+        el.Set(int64(v))
+      }
+    }
+    
+    // apenas a função String() funciona de forma automática, Int64() é só para deixar organizado
+    func(el UniqueIdentifier) Int64() int64 {
+      b := make([]byte, 16)
+      for i := 0; i != 16; i += 1 {
+        b[i] = el[i]
+      }
+
+      // BigEndian e LittleEndian é a ordem como os bits são organizados, da direita para a esqueda ou da esqueda para a direita
+      // Basta respeitar a mesma ordem para recuperar os dados
+      // Essa tecnica permite transformar qualquer dado em binário e arquivar.
+      return int64(binary.LittleEndian.Uint64(b))
+    }
+    
+    // Eu sempre faço a função String() para ajudar na hora do debug
+    func(el UniqueIdentifier) String() string {
+      b := make([]byte, 16)
+      for i := 0; i != 16; i += 1 {
+        b[i] = el[i]
+      }
+      i := int64(binary.LittleEndian.Uint64(b))
+      return strconv.FormatInt(i, 10)
+    }
+```
+
+```golang
+    // este é im arquivo dentro do módulo client
+    type NullString struct {
+      // Acredito que o termo certo seria protected para value e valid, em vez de privade
+      value string
+
+      // valid is true if String is not NULL
+      valid bool 
+    }
+    
+    func(el *NullString) Set(value interface{}) {
+    
+      el.valid = true
+    
+      switch converted := value.(type) {
+      case nil:
+        el.value = ""
+        el.valid = false
+    
+      // todo: fazer outros tipos (int, uint, float, ...)
+      case int64:
+        el.value = strconv.FormatInt(converted, 10)
+    
+      case string:
+        el.value = converted
+      }
+    }
+    
+    func(el NullString) String() string {
+      if el.valid == false {
+        return "nil string"
+      }
+    
+      return el.value
+    }
+```
+
+```golang
+    // este é im arquivo dentro do módulo client
+    type Client struct {
+      ID                      UniqueIdentifier
+      Phone                   NullString
+      Email                   string
+      Password                string
+    }
+    
+    func (el Client) ToDb() ClientSql {
+      var id mssql.UniqueIdentifier
+      id.Scan(el.ID.Int64())
+    
+      // el.Phone.'v'alue, funciona apenas dentro do mesmo módulo
+      var phone sql.NullString = struct {
+        String string
+        Valid  bool
+      }{String: el.Phone.value, Valid: el.Phone.valid}
+    
+      return ClientSql{
+        ID: id,
+        Phone: phone,
+        Email: el.Email,
+        Password: el.Password,
+      }
+    }
+```
+
+```golang   
+    // este é im arquivo dentro do módulo client
+    type ClientSql struct {
+      ID                      mssql.UniqueIdentifier
+      Phone                   sql.NullString
+      Email                   string
+      Password                string
+    }
+```
+
+Antes de começar a explicar o código acima, vamos criar dentro da sua estrutura de código um módulo chamado **factoryClient**. Esse é um padrão de boas práticas de software e não é usado só pelo golang. A ideia do factory é simplificar a inicialização de objetos muito complexos. O outro ponto, é golang não aceita sobrecarga de métodos, aquele monte de funções com o mesmo nome e tipos definidos, pois, a turma do golang deixa bem claro dois pontos, sobrecarga pode causar erros difíceis de serem percebidos em códigos complexos e golang não aceita parâmetros opcionáis peno mesmo motivo. Então, a saída criar dentro do módulo factory um monte de função iniciadas por **New** + **NomeFunção**.
+
+> O módulo **factory** sempre deve começar pela palavra **factory** e ser concatenado com o nome do módulo pai, assim, basta começar a digitar **factory** e deixar a magia do autocompletar atuar.
+
+```golang
+    // módulo factoryClient
+
+    //Create a new Client with id, phone, email and password
+    func New(id, phone interface{}, email, password string) *Client {
+      var idConverted UniqueIdentifier
+      idConverted.Set(id)
+    
+      var phoneConverted NullString
+      phoneConverted.Set(phone)
+    
+      // golang não deixa você cometer os principais erros do C, ou seja, este é um 
+      // ponteiro válido, pois, o retorno da função não limpa a memória, quem limpa é o 
+      // garbage collector.
+      return &Client{
+        ID: idConverted,
+        Phone: phoneConverted,
+        Email: email,
+        Password: password,
+      }
+    }
+
+    //Create a new Client with id, email and password (without phone)
+    func NewWithoutPhone(id interface{}, email, password string) *Client {
+      var idConverted UniqueIdentifier
+      idConverted.Set(id)
+    
+      var phoneConverted NullString
+      ph.Set(nil)
+    
+      return &Client{
+        ID: idConverted,
+        Phone: phoneConverted,
+        Email: email,
+        Password: password,
+      }
+    }
+```
+
+A grande magia do factory sempre vai ser vista pelo seu eu do futuro, aquela mesma pessoa doida para ir viver um pouco e sem a menos lembrança de que código é este, graças a magia do autocompletar.
+
+```golang
+    var client1 = factoryClient.New(1, 123456, "mail@company.com", "pass")
+    var client2 = factoryClient.NewWithoutPhone(1, "mail@company.com", "pass")
+```
+
+Estamos no futuro, e **client** necessita ser migrado para outra plataforma noSQL e o código legado está bem feito.
+
+> Código legado não quer dizer código ruim, só que dizer, a gente não usa mais este código. Código ruim é sinonimo de inexperiência. 
+
+## OCP - Open/closed principle
+Princípio do Aberto/Fechado - Você deve ser capaz de estender um comportamento de um objeto sem a necessidade de o modificar.
+
+```golang
+    type ClientGeneric struct {
+      Client
+    }
+
+    func (el Client) ToDb() ClientNoSql {...}
+```
+
+Percebe como ficou fácil? Quando você coloca um tipo dentro do outro, o novo tipo herda todas as propriedades e métodos, então, basta reescrever apenas o necessário. 
+
