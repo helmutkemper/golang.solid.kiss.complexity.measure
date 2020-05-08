@@ -748,3 +748,10 @@ Caso contrário, basta adicionar uma chave com um novo nome para pelo menos uma 
       NomeOpcional OutroStruct
     }
 ```
+
+Logo
+
+```golang
+    var c ClientGeneric
+    c.NovoNome.Password = "pass"
+```
