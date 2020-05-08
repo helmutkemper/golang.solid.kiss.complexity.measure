@@ -550,14 +550,16 @@ Primeiro você vai criar um módulo **client** na sua estrutura de código, mais
       }
     }
     
-    // apenas a função String() funciona de forma automática, Int64() é só para deixar organizado
+    // apenas a função String() funciona de forma automática, Int64() é só para deixar 
+    // organizado
     func(el UniqueIdentifier) Int64() int64 {
       b := make([]byte, 16)
       for i := 0; i != 16; i += 1 {
         b[i] = el[i]
       }
 
-      // BigEndian e LittleEndian é a ordem como os bits são organizados, da direita para a esqueda ou da esqueda para a direita
+      // BigEndian e LittleEndian é a ordem como os bits são organizados, da direita para 
+      // a esqueda ou da esqueda para a direita
       // Basta respeitar a mesma ordem para recuperar os dados
       // Essa tecnica permite transformar qualquer dado em binário e arquivar.
       return int64(binary.LittleEndian.Uint64(b))
